@@ -1,0 +1,5 @@
+.idea
+node_modules
+src/SyncPromise.solution.js
+.nyc_output
+coverage
