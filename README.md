@@ -18,6 +18,17 @@ Utilize documentation and unit tests to help you create a synchronous promise ob
 Read the docs!  You don't have to fully comprehend it initially, but it is good to get familiar with the documentation.
 
 ### Run Unit Tests
-You can test your work using `npm test`.  Once the unit tests pass, you're done!
+```
+npm run test
+npm run test:min
+npm run test:cov
+```
 
-When you are finished you can run `npm run test:cov` to generate code coverage.  Then take a look at `coverage/lcov-report/index.html`.
+- `npm run test`
+  - Displays complete unit test report.
+- `npm run test:min`
+  - Displays minimal unit test report.
+  - Only displays the first unit test error.
+- `npm run test:cov`
+  - Generates code coverage.
+  - When you are finished you can run it and take a look at `coverage/lcov-report/index.html`.

@@ -1,11 +1,12 @@
 {
   "name": "tdl-syncpromise",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Test Driven Learning: SyncPromise",
   "main": "index.js",
   "scripts": {
     "start": "npm test",
-    "test": "mocha --compilers js:babel-register --recursive \"src/**/__tests__/*.js\"",
+    "test": "mocha --color --compilers js:babel-register --recursive \"src/**/__tests__/*.js\"",
+    "test:min": "clear && npm run test -- --bail --reporter progress",
     "test:cov": "cross-env NODE_ENV=test nyc --reporter=lcov --reporter=text npm test"
   },
   "repository": {

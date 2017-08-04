@@ -141,6 +141,15 @@ describe('SyncPromise', () => {
         expect(actual).toBe(expected);
       });
 
+      it('should set the value to the result of the function', () => {
+        new SyncPromise(resolve('!!')).then(v => v + '@@').finally(state => {
+          expect(state).toContain({
+            status: 'Resolved',
+            value: '!!@@',
+          });
+        });
+      });
+
       it('should return the SyncPromise in order to support function chaining', () => {
         const promise = new SyncPromise(resolve()).then(noop);
         expect(promise).toBeA(SyncPromise);
@@ -255,8 +264,17 @@ describe('SyncPromise', () => {
         expect(actual).toBe(expected);
       });
 
+      it('should update the status/value to the result of the function', () => {
+        new SyncPromise(reject('&&')).catch(v => v + '##').finally(state => {
+          expect(state).toContain({
+            status: 'Resolved',
+            value: '&&##',
+          });
+        });
+      });
+
       it('should return the SyncPromise in order to support function chaining', () => {
-        const promise = new SyncPromise(resolve()).catch(noop);
+        const promise = new SyncPromise(reject()).catch(noop);
         expect(promise).toBeA(SyncPromise);
       });
     });
@@ -338,6 +356,11 @@ describe('SyncPromise', () => {
           value: err,
         });
       });
+
+      it('should return the SyncPromise in order to support function chaining', () => {
+        const promise = new SyncPromise(resolve()).then(abort());
+        expect(promise).toBeA(SyncPromise);
+      });
     });
 
     describe('catch()', () => {
@@ -358,10 +381,73 @@ describe('SyncPromise', () => {
           value: err,
         });
       });
+
+      it('should return the SyncPromise in order to support function chaining', () => {
+        const promise = new SyncPromise(reject()).catch(abort());
+        expect(promise).toBeA(SyncPromise);
+      });
     });
   });
 
   describe('Chaining', () => {
+    describe('resolve->resolve', () => {
+      it('should only resole once', () => {
+        new SyncPromise(resolve => {
+          resolve(123);
+          resolve(234);
+        }).finally(state => {
+          expect(state).toContain({
+            status: 'Resolved',
+            value: 123,
+          });
+        });
+      });
+    });
+
+    describe('reject->reject', () => {
+      it('should only reject once', () => {
+        new SyncPromise((_, reject) => {
+          reject(7602);
+          reject(769);
+        }).finally(state => {
+          expect(state).toContain({
+            status: 'Rejected',
+            value: 7602,
+          });
+        });
+      });
+    });
+
+    describe('resolve->reject->throw', () => {
+      it('should resolve', () => {
+        new SyncPromise((resolve, reject) => {
+          resolve(7612);
+          reject(89074);
+          throw '>.<';
+        }).finally(state => {
+          expect(state).toContain({
+            status: 'Resolved',
+            value: 7612,
+          });
+        });
+      });
+    });
+
+    describe('reject->resolve->throw', () => {
+      it('should reject', () => {
+        new SyncPromise((resolve, reject) => {
+          reject(2054);
+          resolve(276);
+          throw ';_;';
+        }).finally(state => {
+          expect(state).toContain({
+            status: 'Rejected',
+            value: 2054,
+          });
+        });
+      });
+    });
+
     describe('resolve->then->finally', () => {
       it('should call then', () => {
         new SyncPromise(resolve(80)).then(v => v * 3).finally(({ status, value }) => {
